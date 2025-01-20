@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Animal Guessing Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        .clue {
+            margin: 10px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+        }
+        #guess-input {
+            margin: 10px;
+            padding: 5px;
+            font-size: 16px;
+        }
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .hidden {
+            display: none;
+        }
+        #score-container {
+            margin: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .game-over {
+            margin: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .winner {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .loser {
+            background-color: #f44336;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>Animal Guessing Game</h1>
+    <p>I will give you clues about an animal, and you try to guess what it is!</p>
+    <div id="score-container">
+        Score: <span id="score">0</span>/10
+    </div>
+    
+    <div id="game-container">
+        <div id="clues-container"></div>
+        <div id="guess-container">
+            <input type="text" id="guess-input" placeholder="Enter your guess">
+            <button onclick="makeGuess()">Guess!</button>
+        </div>
+        <button id="next-clues-btn" onclick="showNextClues()" class="hidden">Show Next Clues</button>
+        <button id="new-game-btn" onclick="startNewGame()">Start New Game</button>
+    </div>
+
+    <script>
+        let currentAnimal = '';
+        let currentClues = [];
+        let currentClueIndex = 0;
+
+        async function startNewGame() {
+            const response = await fetch('/new-game');
+            const data = await response.json();
+            
+            if (data.gameOver) {
+                showGameOver(data.finalScore, data.won);
+                return;
+            }
+            
+            currentAnimal = data.animal;
+            currentClues = data.clues;
+            currentClueIndex = 0;
+            
+            document.getElementById('clues-container').innerHTML = '';
+            document.getElementById('guess-input').value = '';
+            document.getElementById('next-clues-btn').classList.remove('hidden');
+            document.getElementById('score').textContent = data.currentScore;
+            
+            showNextClues();
+        }
+
+        function showGameOver(finalScore, won) {
+            const container = document.getElementById('game-container');
+            const gameOverDiv = document.createElement('div');
+            gameOverDiv.className = `game-over ${won ? 'winner' : 'loser'}`;
+            gameOverDiv.textContent = won 
+                ? `🎉 Congratulations! You won with ${finalScore}/10 correct! 🎉`
+                : `Game Over! You got ${finalScore}/10 correct. Try again!`;
+            
+            container.innerHTML = '';
+            container.appendChild(gameOverDiv);
+            
+            const newGameBtn = document.createElement('button');
+            newGameBtn.textContent = 'Play Again';
+            newGameBtn.onclick = startNewGame;
+            container.appendChild(newGameBtn);
+        }
+
+        function showNextClues() {
+            if (currentClueIndex < currentClues.length) {
+                // Show two clues at a time
+                const cluesDiv = document.getElementById('clues-container');
+                
+                for (let i = 0; i < 2 && currentClueIndex < currentClues.length; i++) {
+                    const clueElement = document.createElement('div');
+                    clueElement.className = 'clue';
+                    clueElement.textContent = `Clue #${currentClueIndex + 1}: ${currentClues[currentClueIndex]}`;
+                    cluesDiv.appendChild(clueElement);
+                    currentClueIndex++;
+                }
+
+                if (currentClueIndex >= currentClues.length) {
+                    document.getElementById('next-clues-btn').classList.add('hidden');
+                }
+            }
+        }
+
+        async function makeGuess() {
+            const guess = document.getElementById('guess-input').value.toLowerCase();
+            
+            // Submit guess and update score
+            const response = await fetch(`/submit-guess/${guess}/${currentAnimal}`);
+            const data = await response.json();
+            document.getElementById('score').textContent = data.score;
+            
+            if (data.isCorrect) {
+                let message = '🎉 Correct! You\'re amazing! 🎉';
+                if (guess !== currentAnimal) {
+                    message += `\nThe correct spelling is "${data.correctSpelling}"`;
+                }
+                alert(message);
+                document.getElementById('next-clues-btn').classList.add('hidden');
+                startNewGame();
+            } else {
+                if (currentClueIndex >= currentClues.length) {
+                    alert(`Sorry! I was a ${currentAnimal}!`);
+                    startNewGame();
+                } else {
+                    alert('Not quite! Here are two more clues...');
+                    showNextClues();
+                }
+            }
+            
+            document.getElementById('guess-input').value = '';
+        }
+
+        // Start a game when the page loads
+        startNewGame();
+    </script>
+</body>
+</html> 
