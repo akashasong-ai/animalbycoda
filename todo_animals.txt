@@ -1,0 +1,115 @@
+TODO Animals by Category:
+
+# Mammals (New)
+- [ ] Dog
+- [ ] Cat
+- [ ] Horse
+- [ ] Cow
+- [ ] Pig
+- [ ] Sheep
+- [ ] Goat
+- [ ] Rabbit
+- [ ] Deer (exists)
+- [ ] Squirrel
+- [ ] Bear
+- [ ] Elephant (exists)
+- [ ] Giraffe (exists)
+- [ ] Lion (exists)
+- [ ] Tiger (exists)
+- [ ] Monkey (exists)
+- [ ] Gorilla (exists)
+- [ ] Zebra (exists)
+- [ ] Kangaroo (exists)
+- [ ] Koala (exists)
+- [ ] Panda (exists)
+- [ ] Sloth
+- [ ] Leopard
+- [ ] Cheetah (exists)
+- [ ] Rhino (exists)
+- [ ] Hippo (exists)
+- [ ] Camel
+- [ ] Llama
+- [ ] Bat
+- [ ] Raccoon
+- [ ] Fox
+- [ ] Wolf (exists)
+- [ ] Skunk
+- [ ] Otter
+- [ ] Beaver
+- [ ] Moose
+- [ ] Buffalo
+- [ ] Ferret
+- [ ] Guinea pig
+- [ ] Hamster
+- [ ] Mouse
+- [ ] Rat
+- [ ] Opossum
+- [ ] Armadillo
+
+# Birds (New)
+- [ ] Chicken
+- [ ] Duck
+- [ ] Turkey
+- [ ] Owl (exists)
+- [ ] Eagle (exists)
+- [ ] Falcon
+- [ ] Parrot (exists)
+- [ ] Swan
+- [ ] Flamingo
+- [ ] Peacock (exists)
+- [ ] Penguin (exists)
+- [ ] Pigeon
+- [ ] Sparrow
+- [ ] Robin
+- [ ] Blue jay
+- [ ] Cardinal
+- [ ] Woodpecker
+- [ ] Hummingbird
+- [ ] Crow
+
+# Marine Animals (New)
+- [ ] Dolphin (exists)
+- [ ] Whale (exists)
+- [ ] Shark (exists)
+- [ ] Seal
+- [ ] Walrus
+- [ ] Octopus (exists)
+- [ ] Starfish
+- [ ] Crab
+- [ ] Lobster
+- [ ] Jellyfish (exists)
+
+# Reptiles & Amphibians (New)
+- [ ] Turtle (exists)
+- [ ] Frog
+- [ ] Toad
+- [ ] Snake (exists)
+- [ ] Lizard (exists)
+- [ ] Alligator
+- [ ] Crocodile (exists)
+- [ ] Iguana
+- [ ] Chameleon (exists)
+- [ ] Gecko
+
+# Insects & Arachnids (New Category)
+- [ ] Spider
+- [ ] Ant
+- [ ] Butterfly
+- [ ] Bee
+- [ ] Ladybug
+- [ ] Dragonfly
+- [ ] Mosquito
+- [ ] Worm
+- [ ] Snail
+
+# Fish (New Category)
+- [ ] Goldfish
+- [ ] Koi
+- [ ] Carp
+- [ ] Betta fish
+- [ ] Clownfish
+- [ ] Seahorse
+- [ ] Ray
+- [ ] Eel
+
+Note: (exists) indicates the animal is already in the game's database

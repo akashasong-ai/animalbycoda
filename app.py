@@ -15,15 +15,28 @@ def home():
 
 @app.route('/new-game')
 def new_game():
-    # Pick a random animal and get its clues
-    animal = random.choice(list(animals.keys()))
-    clues = animals[animal]  # Get the original clues array
+    # Initialize used_animals if not exists
+    if not hasattr(app, 'used_animals'):
+        app.used_animals = set()
+    
+    # Get available animals (ones we haven't used yet)
+    available_animals = set(animals.keys()) - app.used_animals
+    
+    # If we've used all animals or this is a new game, reset the used animals
+    if not available_animals:
+        app.used_animals.clear()
+        available_animals = set(animals.keys())
+    
+    # Pick a random animal from available ones
+    animal = random.choice(list(available_animals))
+    clues = animals[animal]
+    
+    # Add to used animals
+    app.used_animals.add(animal)
     
     return jsonify({
         'animal': animal,
-        'clues': clues,  # Return unmodified clues array
-        'score': 0,
-        'questionsAsked': 0,
+        'clues': clues,
         'totalQuestions': 10
     })
 
@@ -37,4 +50,4 @@ def submit_guess(guess, actual):
     })
 
 if __name__ == '__main__':
-    app.run(debug=True)                  
+    app.run(debug=True)                                                                                                                                                                                                                        
