@@ -15,21 +15,26 @@ def home():
 
 @app.route('/new-game')
 def new_game():
-    # Pick a random animal and randomize its clues
+    # Pick a random animal and get its clues
     animal = random.choice(list(animals.keys()))
-    clues = random.sample(animals[animal], len(animals[animal]))
+    clues = animals[animal]  # Get the original clues array
     
     return jsonify({
         'animal': animal,
-        'clues': clues
+        'clues': clues,  # Return unmodified clues array
+        'score': 0,
+        'questionsAsked': 0,
+        'totalQuestions': 10
     })
 
 @app.route('/submit-guess/<guess>/<actual>')
 def submit_guess(guess, actual):
+    is_correct = is_close_enough(guess, actual)
     return jsonify({
-        'isCorrect': is_close_enough(guess, actual),
-        'correctSpelling': actual if is_close_enough(guess, actual) else None
+        'isCorrect': is_correct,
+        'correctSpelling': actual if is_correct else None,
+        'score': 1 if is_correct else 0
     })
 
 if __name__ == '__main__':
-    app.run(debug=True)      
+    app.run(debug=True)                  
