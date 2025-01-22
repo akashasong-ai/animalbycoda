@@ -5,20 +5,22 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #3C4A3E;
-            --secondary-color: #C2D4B7;
-            --accent-color: #FFB5B5;
-            --background-color: #F5E6D3;
-            --text-color: #2D2424;
-            --error-color: #D2B4B4;
-            --success-color: #3C4A3E;
+            --primary-color: #4B3E6C;
+            --secondary-color: #9C83E8;
+            --accent-color: #FFD6E6;
+            --background-color: linear-gradient(135deg, #FFD6E6 0%, #9C83E8 50%, #4B3E6C 100%);
+            --text-color: #FFFFFF;
+            --dark-text-color: #2D2424;
+            --light-bg-color: rgba(255, 255, 255, 0.95);
+            --error-color: #FF8FA3;
+            --success-color: #4B3E6C;
             --border-radius: 12px;
-            --shadow: 0 4px 6px rgba(45, 36, 36, 0.1);
+            --shadow: 0 4px 6px rgba(75, 62, 108, 0.2);
         }
 
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: transparent;
+            background: transparent;
             color: var(--text-color);
             line-height: 1.6;
             margin: 0;
@@ -48,7 +50,7 @@
             border: 3px solid var(--primary-color);
             box-shadow: var(--shadow);
             position: relative;
-            color: var(--text-color);
+            color: var(--dark-text-color);
         }
 
         h1 {
@@ -61,7 +63,7 @@
 
         #score-container {
             background: var(--primary-color);
-            color: white;
+            color: var(--text-color);
             padding: 0.8rem 1.5rem;
             border-radius: var(--border-radius);
             font-size: 1.2rem;
@@ -81,13 +83,19 @@
             min-width: 60px;
         }
 
+        #clues-container {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
         .clue {
-            background-color: var(--secondary-color);
+            background: linear-gradient(135deg, #4B3E6C 0%, #2D2424 100%);
             margin: 1rem 0;
             padding: 1.5rem;
             border-radius: var(--border-radius);
             font-size: 1.1rem;
-            border-left: 4px solid var(--primary-color);
+            border-left: 4px solid var(--accent-color);
             text-align: left;
             box-shadow: var(--shadow);
             color: var(--text-color);
@@ -108,8 +116,48 @@
             font-family: 'Poppins', sans-serif;
             transition: all 0.3s ease;
             margin-right: 1rem;
-            background-color: rgba(255, 255, 255, 0.9);
-            color: var(--text-color);
+            background-color: var(--light-bg-color);
+            color: var(--dark-text-color);
+        }
+
+        @media (max-width: 768px) {
+            .game-container {
+                padding: 1rem;
+                margin: 0.5rem;
+                width: calc(100% - 1rem);
+            }
+
+            #guess-input {
+                width: 100%;
+                margin: 0 0 1rem 0;
+            }
+
+            .button-container {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+                width: 100%;
+            }
+
+            button {
+                width: 100%;
+                margin: 0;
+            }
+
+            #score-container {
+                position: static;
+                margin: 1rem auto;
+                width: 100%;
+                text-align: center;
+            }
+
+            .clue {
+                padding: 1rem;
+            }
+
+            .leaderboard {
+                margin-top: 1rem;
+            }
         }
 
         #guess-input:focus {
@@ -123,7 +171,7 @@
             font-size: 1rem;
             cursor: pointer;
             background-color: var(--primary-color);
-            color: white;
+            color: var(--text-color);
             border: none;
             border-radius: var(--border-radius);
             font-family: 'Poppins', sans-serif;
@@ -134,7 +182,7 @@
         button:hover {
             transform: translateY(-2px);
             box-shadow: var(--shadow);
-            background-color: var(--text-color);
+            background-color: var(--secondary-color);
         }
 
         button:active {
@@ -209,10 +257,10 @@
         .leaderboard {
             margin-top: 2rem;
             padding: 1rem;
-            background: var(--secondary-color);
+            background: var(--light-bg-color);
             border-radius: var(--border-radius);
             border: 2px solid var(--primary-color);
-            color: var(--text-color);
+            color: var(--dark-text-color);
         }
 
         .leaderboard h2 {
@@ -261,16 +309,18 @@
             
             <div id="guess-container">
                 <input type="text" id="guess-input" placeholder="Enter your guess">
-                <button onclick="makeGuess()">Guess!</button>
-                <button id="next-clues-btn" onclick="showNextClues()" class="hidden">Show Next Clues</button>
-                <button id="new-game-btn" onclick="startNewGame()">Start New Game</button>
+                <div class="button-container">
+                    <button onclick="makeGuess()">Guess!</button>
+                    <button id="next-clues-btn" onclick="showNextClues()" class="hidden">Show Next Clues</button>
+                    <button id="new-game-btn" onclick="startNewGame()">Start New Game</button>
+                </div>
             </div>
-        </div>
-
-        <div id="leaderboard" class="leaderboard">
-            <h2>Top 5 Players</h2>
-            <div class="leaderboard-scroll">
-                <ul id="leaderboard-list"></ul>
+            
+            <div id="leaderboard" class="leaderboard">
+                <h2>Top 5 Players</h2>
+                <div class="leaderboard-scroll">
+                    <ul id="leaderboard-list"></ul>
+                </div>
             </div>
         </div>
     </div>
@@ -452,7 +502,9 @@
                 } else {
                     setTimeout(() => {
                         feedback.className = 'feedback';
-                        startNewGame();
+                        // Game continues until 10 questions are asked
+                        document.getElementById('guess-input').value = '';
+                        document.getElementById('guess-input').focus();
                     }, 2000);
                 }
             } else {
@@ -475,6 +527,8 @@
                     feedback.className = 'feedback error';
                     setTimeout(() => {
                         feedback.className = 'feedback';
+                        document.getElementById('guess-input').value = '';
+                        document.getElementById('guess-input').focus();
                         showNextClues();
                     }, 2000);
                 }
@@ -487,4 +541,4 @@
         startNewGame();
     </script>
 </body>
-</html>                                                                                                                  
+</html>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
