@@ -4,548 +4,121 @@
     <title>Animal Guessing Game</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Fredoka+One&display=swap" rel="stylesheet">
     <style>
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-        
-        @keyframes slideIn {
-            from { transform: translateX(-20px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        
         :root {
-            --primary-color: #4B3E6C;
-            --secondary-color: #9C83E8;
-            --accent-color: #FFD6E6;
-            --background-color: #FFFFFF;
-            --text-color: #4B3E6C;
-            --dark-text-color: #2D2424;
-            --light-bg-color: rgba(255, 255, 255, 0.95);
-            --error-color: #FF8FA3;
-            --success-color: #4B3E6C;
-            --border-radius: 12px;
-            --shadow: 0 4px 6px rgba(75, 62, 108, 0.2);
+            --accent-color: #9C83E8;
+            --background-color: #ffffff;
         }
         
-        * {
-            box-sizing: border-box;
+        body {
             margin: 0;
             padding: 0;
+            font-family: Arial, sans-serif;
         }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: transparent;
-            color: var(--text-color);
-            line-height: 1.6;
-            margin: 0;
-            padding: 2rem;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-        }
-
-        .main-container {
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-            width: 100%;
+        
+        .game-container {
             max-width: 800px;
             margin: 0 auto;
-        }
-
-        .game-container {
-            width: 800px;
-            height: 600px; /* Fixed height instead of min-height */
-            margin: 0 auto;
             padding: 2rem;
+            text-align: center;
             background: url('/static/images/new_game_bg.png') center/cover no-repeat, var(--background-color);
-            border-radius: var(--border-radius);
-            border: 3px solid var(--primary-color);
-            box-shadow: var(--shadow);
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             position: relative;
-            color: var(--dark-text-color);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden; /* Prevent scrolling */
         }
-
-        @media (max-width: 800px) {
-            .game-container {
-                width: 100%;
-                height: auto;
-                min-height: 600px;
-                max-height: 100vh;
-            }
-        }
-
+        
         h1 {
-            color: var(--primary-color);
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            text-align: center;
-            font-family: 'Fredoka One', cursive;
-            animation: bounce 2s infinite;
-        }
-
-        #score-container {
-            background: var(--primary-color);
-            color: var(--text-color);
-            padding: 0.8rem 1.5rem;
-            border-radius: var(--border-radius);
-            font-size: min(1.2rem, 4vw);
-            font-weight: 600;
-            margin: -0.5rem auto 1rem;
-            width: 80%;
-            max-width: 400px;
-            text-align: center;
-            box-shadow: var(--shadow);
-            order: 1;
+            color: #ffffff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            margin-bottom: 1rem;
         }
         
-        .progress-label {
-            display: block;
+        .description-block {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+        
+        #clues-list {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+            list-style: none;
+        }
+        
+        #clues-list li {
             margin-bottom: 0.5rem;
-            color: var(--accent-color);
+            color: #333;
             font-size: 1.1rem;
-            font-weight: 600;
         }
         
-        .progress-description {
-            margin-top: 0.5rem;
-            font-size: 0.9rem;
-            color: var(--accent-color);
-            opacity: 0.9;
+        input[type="text"] {
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            border: 2px solid var(--accent-color);
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+            width: 80%;
+            max-width: 300px;
         }
         
-        .score-progress {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
+        button {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            margin: 0.5rem;
+            transition: background-color 0.2s;
+        }
+        
+        button:hover {
+            background-color: #8670d4;
         }
         
         #score-progress {
-            flex-grow: 1;
-            height: 12px;
-            border-radius: var(--border-radius);
-        }
-        
-        #score-progress::-webkit-progress-bar {
-            background-color: var(--light-bg-color);
-            border-radius: var(--border-radius);
+            width: 80%;
+            height: 20px;
+            margin: 1rem auto;
         }
         
         #score-progress::-webkit-progress-value {
             background-color: #9C83E8;
-            border-radius: var(--border-radius);
         }
         
-        .description-block {
-            background: rgba(156, 131, 232, 0.2);
-            color: var(--primary-color);
-            padding: 1rem;
-            margin: 0.5rem auto 1.5rem;
-            border-radius: var(--border-radius);
-            text-align: center;
-            width: 90%;
-            max-width: 600px;
-            box-shadow: var(--shadow);
-        }
-
-        #score {
-            display: inline-block;
-            min-width: min(60px, 15vw);
-        }
-
-        #clues-container {
-            flex: 1;
-            width: 100%;
-            padding: 0 1rem;
-            box-sizing: border-box;
+        #score-progress::-webkit-progress-bar {
+            background-color: #f0f0f0;
+            border-radius: 10px;
         }
         
-        .clue {
-            background: linear-gradient(135deg, #4B3E6C 0%, #2D2424 100%);
-            margin: 0.75rem auto;
-            padding: 1.25rem;
-            border-radius: var(--border-radius);
-            font-size: 1.1rem;
-            border-left: 4px solid var(--accent-color);
-            text-align: left;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            color: #FFFFFF;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-            display: block;
-            width: 95%;
-            max-width: 700px;
-            box-sizing: border-box;
-            overflow-wrap: break-word;
-            word-wrap: break-word;
-            hyphens: auto;
-            animation: slideIn 0.5s ease-out forwards;
-            opacity: 0;
-            backdrop-filter: blur(5px);
-        }
-
-        #guess-container {
-            margin: 2rem 0;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 1.5rem;
-            border-radius: var(--border-radius);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            backdrop-filter: blur(5px);
-        }
-
-        #guess-input {
-            padding: 0.8rem 1.2rem;
-            font-size: 1.2rem;
-            border: 2px solid var(--secondary-color);
-            border-radius: var(--border-radius);
-            width: 300px;
-            height: 3rem;
-            font-family: 'Poppins', sans-serif;
-            transition: all 0.3s ease;
-            margin-right: 1rem;
-            background-color: var(--light-bg-color);
-            color: var(--dark-text-color);
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
-        }
-
-        @media (max-width: 768px) {
-            body {
-                padding: 0.5rem;
-                height: 100vh;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                overflow: hidden;
-            }
-            
-            .game-container {
-                padding: 1rem;
-                margin: 0;
-                width: 95%;
-                max-width: none;
-                height: 600px; /* Fixed height for mobile */
-                overflow: hidden;
-            }
-
-            h1 {
-                font-size: 1.8rem;
-                margin-bottom: 0.5rem;
-            }
-
-            #score-container {
-                font-size: calc(0.8rem + 1vw);
-                padding: 0.6rem 1rem;
-                margin: 0.5rem auto 1rem;
-                width: auto;
-                transform: none;
-            }
-
-            #guess-input {
-                width: 90%;
-                margin: 0.5rem auto;
-                font-size: 1.2rem;
-                padding: 0.8rem;
-            }
-
-            .button-container {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                gap: 0.5rem;
-                width: 90%;
-                margin: 0.5rem auto;
-            }
-
-            button {
-                width: 100%;
-                margin: 0;
-                font-size: 1.2rem;
-                padding: 0.8rem;
-            }
-
-            .clue {
-                padding: 0.8rem;
-                font-size: 1.1rem;
-                text-align: left;
-                margin: 0.5rem auto;
-                width: 85%;
-                box-sizing: border-box;
-                overflow-wrap: break-word;
-                word-wrap: break-word;
-                hyphens: auto;
-            }
-            
-            .clues-section {
-                width: 100%;
-                overflow-x: hidden;
-                padding: 0;
-                margin: 0 auto;
-            }
-
-            .leaderboard {
-                margin: 1rem auto;
-                padding: 1rem;
-                width: 90%;
-            }
-
-            .instructions {
-                font-size: 1.1rem;
-                margin: 0.8rem auto;
-                width: 90%;
-                padding: 0 1rem;
-            }
-
-            .player-name-input {
-                width: 90%;
-                font-size: 1.2rem;
-                padding: 0.8rem;
-                margin: 0.5rem auto;
-            }
-
-            .submit-score-btn {
-                width: 90%;
-                font-size: 1.2rem;
-                padding: 0.8rem;
-                margin: 0.5rem auto;
-            }
-        }
-
-        #guess-input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 2px rgba(60, 74, 62, 0.1);
-        }
-
-        button {
-            padding: 0.8rem 1.5rem;
-            font-size: 1rem;
-            cursor: pointer;
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            color: #FFFFFF;
-            border: none;
-            border-radius: var(--border-radius);
-            font-family: 'Fredoka One', cursive;
-            transition: all 0.3s ease;
-            margin: 0.5rem;
-            position: relative;
-            overflow: hidden;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-            animation: pulse 2s infinite;
-        }
-
-        button:before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                120deg,
-                transparent,
-                rgba(255, 255, 255, 0.3),
-                transparent
-            );
-            transition: 0.5s;
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow);
-            background-color: var(--secondary-color);
-        }
-
-        button:hover:before {
-            left: 100%;
-        }
-
-        button:active {
-            transform: translateY(0);
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .game-over {
-            margin: 2rem 0;
-            padding: 2rem;
-            border-radius: var(--border-radius);
-            font-size: 1.5rem;
-            font-weight: 600;
-            text-align: center;
-            box-shadow: var(--shadow);
-        }
-
-        .winner {
-            background-color: var(--accent-color);
-            color: var(--text-color);
-        }
-
-        .loser {
-            background-color: var(--error-color);
-            color: var(--text-color);
-        }
-
-        #feedback {
-            padding: 1rem;
-            margin: 1rem auto;
-            border-radius: var(--border-radius);
-            font-weight: 600;
-            opacity: 0;
-            transition: all 0.3s ease;
-            max-width: 80%;
-            text-align: center;
-            position: relative;
-            border: 2px solid transparent;
-        }
-
-        #feedback.success {
-            background-color: var(--accent-color);
-            color: var(--text-color);
-            opacity: 1;
-            border-color: var(--success-color);
-            animation: pulse 1s ease-in-out;
-        }
-
-        #feedback.error {
-            background-color: var(--error-color);
-            color: var(--text-color);
-            opacity: 1;
-            border-color: var(--primary-color);
-            animation: pulse 1s ease-in-out;
-        }
-
-        #score-progress {
-            transition: all 0.3s ease;
-        }
-
-        #score-progress::-webkit-progress-value {
-            transition: all 0.3s ease;
-            background: linear-gradient(45deg, var(--accent-color) 0%, var(--secondary-color) 100%);
-        }
-
         .progress-label {
-            animation: bounce 1s ease-in-out;
+            color: #ffffff;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            margin-bottom: 0.5rem;
         }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-            100% { transform: scale(1); }
-        }
-
-        .instructions {
-            text-align: center;
-            font-size: 1.2rem;
-            margin: 1.5rem 0;
-        }
-
-        .leaderboard {
-            margin-top: 2rem;
-            padding: 1.5rem;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: var(--border-radius);
-            border: 2px solid var(--primary-color);
-            color: var(--dark-text-color);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-            backdrop-filter: blur(5px);
-        }
-
-        .leaderboard h2 {
-            color: var(--primary-color);
-            text-align: center;
-            margin-bottom: 1rem;
-            font-family: 'Fredoka One', cursive;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
-            animation: bounce 2s infinite;
-        }
-
-        .leaderboard-scroll {
-            max-height: 200px;
-            overflow-y: auto;
-            padding: 0.5rem;
-        }
-
-        .leaderboard ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .player-name-input {
-            width: 100%;
-            max-width: 400px;
-            font-size: 1.2rem;
-            padding: 1rem 1.2rem;
-            border: 2px solid var(--secondary-color);
-            border-radius: var(--border-radius);
-            margin: 1rem auto;
-            font-family: 'Poppins', sans-serif;
-            height: 3rem;
-            display: block;
-            background: var(--light-bg-color);
-            color: var(--dark-text-color);
-        }
-
-        .submit-score-btn {
-            font-size: 1.2rem;
-            padding: 0.8rem 1.5rem;
+        
+        #leaderboard-list {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 1rem;
+            border-radius: 0.5rem;
             margin-top: 1rem;
+            list-style: none;
         }
-
-        @media (max-width: 768px) {
-            .player-name-input {
-                width: calc(100% - 2rem);
-                font-size: 1.2rem;
-                padding: 0.8rem 1.2rem;
-                margin: 0.5rem auto;
-                text-align: center;
-            }
-            
-            .submit-score-btn {
-                width: calc(100% - 2rem);
-                font-size: 1rem;
-                padding: 0.7rem 1rem;
-            }
-        }
-
-        .leaderboard li {
-            padding: 0.8rem 1.2rem;
-            margin: 0.8rem 0;
-            background: linear-gradient(135deg, var(--light-bg-color) 0%, white 100%);
-            border-radius: var(--border-radius);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: transform 0.2s ease;
-            animation: slideIn 0.5s ease-out forwards;
-            border-left: 4px solid var(--secondary-color);
-        }
-
-        .leaderboard li:hover {
-            transform: translateX(5px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        
+        #leaderboard-list li {
+            color: #333;
+            margin-bottom: 0.5rem;
         }
     </style>
 </head>
 <body>
     <div class="main-container">
         <div class="game-container" id="game-container">
+<div class="description-block">
             <div style="position: absolute; top: 1rem; right: 1rem; z-index: 10;">
                 <a href="https://domoretech.ai" target="_blank">
                     <img src="/static/images/dmt-logo.png" alt="DMT Logo" style="width: 50px; height: auto;">
@@ -571,7 +144,7 @@
             </div>
             
             <div id="guess-container">
-                <input type="text" id="guess-input" placeholder="Enter your guess">
+                </div><input type="text" id="guess-input" placeholder="Enter your guess">
                 <div class="button-container">
                     <button onclick="makeGuess()">Guess!</button>
                     <button id="next-clues-btn" onclick="showNextClues()">Show Next Clues</button>
