@@ -67,7 +67,7 @@
             height: 600px; /* Fixed height instead of min-height */
             margin: 0 auto;
             padding: 2rem;
-            background: url('/static/images/background.png') center/cover no-repeat, var(--background-color);
+            background: url('/static/images/new_game_bg.png') center/cover no-repeat, var(--background-color);
             border-radius: var(--border-radius);
             border: 3px solid var(--primary-color);
             box-shadow: var(--shadow);
@@ -145,12 +145,12 @@
         }
         
         #score-progress::-webkit-progress-value {
-            background-color: var(--accent-color);
+            background-color: #9C83E8;
             border-radius: var(--border-radius);
         }
         
         .description-block {
-            background: var(--accent-color);
+            background: rgba(156, 131, 232, 0.2);
             color: var(--primary-color);
             padding: 1rem;
             margin: 0.5rem auto 1.5rem;
@@ -546,6 +546,11 @@
 <body>
     <div class="main-container">
         <div class="game-container" id="game-container">
+            <div style="position: absolute; top: 1rem; right: 1rem; z-index: 10;">
+                <a href="https://domoretech.ai" target="_blank">
+                    <img src="/static/images/dmt-logo.png" alt="DMT Logo" style="width: 50px; height: auto;">
+                </a>
+            </div>
             <h1>Animal Guessing Game</h1>
             <div class="description-block">
                 <p>Welcome to our animal guessing challenge! We have a collection of 100 different animals for you to discover. Can you identify them from the clues provided?</p>
@@ -640,10 +645,20 @@
             }
         }
 
-        let leaderboard = [];
+        let leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
 
         function addToLeaderboard(name, score) {
             leaderboard.push({ name, score });
+            leaderboard.sort((a, b) => b.score - a.score);
+            leaderboard = leaderboard.slice(0, 5); // Keep only top 5 scores
+            localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
+            updateLeaderboardDisplay();
+        });
+            leaderboard.sort((a, b) => b.score - a.score);
+            leaderboard = leaderboard.slice(0, 5); // Keep only top 5 scores
+            localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
+            updateLeaderboardDisplay();
+        });
             leaderboard.sort((a, b) => b.score - a.score);
             leaderboard = leaderboard.slice(0, 5); // Keep only top 5 scores
             updateLeaderboardDisplay();
