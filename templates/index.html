@@ -593,6 +593,44 @@
         let currentClues = [];
         let currentAnimal = '';
         let score = 0;
+        
+        // Animal data with clues
+        const animals = [
+            { name: 'lion', clues: ['I am the king of the jungle', 'I have a magnificent mane', 'I live in pride'] },
+            { name: 'elephant', clues: ['I am the largest land animal', 'I have a long trunk', 'I never forget'] },
+            { name: 'penguin', clues: ['I waddle when I walk', 'I love the cold', 'I am an excellent swimmer'] },
+            { name: 'giraffe', clues: ['I have a very long neck', 'I am the tallest land animal', 'I have spotted patterns'] },
+            { name: 'dolphin', clues: ['I am very intelligent', 'I live in the ocean', 'I communicate with clicks'] }
+        ];
+
+        function getRandomAnimal() {
+            const randomIndex = Math.floor(Math.random() * animals.length);
+            return animals[randomIndex].name;
+        }
+
+        function displayClues() {
+            const animal = animals.find(a => a.name === currentAnimal);
+            if (!animal) return;
+            
+            const cluesList = document.getElementById('clues-list');
+            if (!cluesList) {
+                const gameContainer = document.querySelector('.game-container');
+                const newCluesList = document.createElement('ul');
+                newCluesList.id = 'clues-list';
+                newCluesList.style.listStyle = 'none';
+                newCluesList.style.padding = '1rem';
+                gameContainer.insertBefore(newCluesList, document.querySelector('input[type="text"]'));
+            }
+            
+            const cluesList = document.getElementById('clues-list');
+            cluesList.innerHTML = '';
+            animal.clues.forEach(clue => {
+                const li = document.createElement('li');
+                li.textContent = clue;
+                li.style.marginBottom = '0.5rem';
+                cluesList.appendChild(li);
+            });
+        }
 
         function updateLeaderboardDisplay() {
             const leaderboardList = document.getElementById('leaderboard-list');
@@ -637,8 +675,6 @@
         }
 
         function showNextClues() {
-            // Reset clues for new animal
-            currentClues = [];
             currentAnimal = getRandomAnimal();
             displayClues();
         }
@@ -648,6 +684,17 @@
             document.getElementById('score-progress').value = 0;
             showNextClues();
         }
+
+        // Add event listeners
+        document.querySelector('input[type="text"]').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                makeGuess();
+            }
+        });
+
+        document.querySelector('button:nth-of-type(1)').addEventListener('click', makeGuess);
+        document.querySelector('button:nth-of-type(2)').addEventListener('click', showNextClues);
+        document.querySelector('button:nth-of-type(3)').addEventListener('click', startNewGame);
 
         // Initialize the game
         updateLeaderboardDisplay();
