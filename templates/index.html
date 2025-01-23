@@ -3,18 +3,35 @@
 <head>
     <title>Animal Guessing Game</title>
     <style>
+        :root {
+            --accent-color: #4CAF50;
+        }
         body {
             font-family: Arial, sans-serif;
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
             text-align: center;
+            background: transparent;
+        }
+        #game-container {
+            background: url('/static/images/new_game_bg.png') center/cover no-repeat;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
         }
         .clue {
-            margin: 10px;
-            padding: 10px;
-            background-color: #f0f0f0;
+            background: linear-gradient(135deg, #4B3E6C 0%, #2D2424 100%);
+            margin: 0.75rem auto;
+            padding: 1.25rem;
             border-radius: 5px;
+            font-size: 1.1rem;
+            border-left: 4px solid var(--accent-color);
+            text-align: left;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            color: #FFFFFF;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
         }
         #guess-input {
             margin: 10px;
@@ -67,6 +84,11 @@
     </div>
     
     <div id="game-container">
+        <div style="position: absolute; top: 1rem; right: 1rem; z-index: 10;">
+            <a href="https://domoretech.ai" target="_blank">
+                <img src="/static/images/dmt-logo.png" alt="DMT Logo" style="width: 50px; height: auto;">
+            </a>
+        </div>
         <div id="clues-container"></div>
         <div id="guess-container">
             <input type="text" id="guess-input" placeholder="Enter your guess">
@@ -171,4 +193,4 @@
         startNewGame();
     </script>
 </body>
-</html> 
+</html>             
