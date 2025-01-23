@@ -589,63 +589,22 @@
     </div>
 
     <script>
-        let currentAnimal = '';
-        let currentClues = [];
-        let currentClueIndex = 0;
-        let questionsAsked = 0;
-
-        async function startNewGame() {
-            try {
-                // Only reset game state if it's a new game (not continuing)
-                if (questionsAsked === 0 || questionsAsked >= 10) {
-                    questionsAsked = 0;
-                    document.getElementById('score').textContent = '0/10';
-                }
-                
-                // Clear existing game state
-                const cluesContainer = document.getElementById('clues-container');
-                if (!cluesContainer) {
-                    console.error('Clues container not found');
-                    return;
-                }
-                
-                cluesContainer.innerHTML = '';
-                cluesContainer.style.display = 'block'; // Ensure clues container is visible
-                document.getElementById('guess-input').value = '';
-                
-                console.log('Fetching new game data...');
-                const response = await fetch('/new-game');
-                const data = await response.json();
-                console.log('Received game data:', data);
-                
-                if (!data.clues || !Array.isArray(data.clues)) {
-                    console.error('Invalid clues data received:', data.clues);
-                    return;
-                }
-                
-                currentAnimal = data.animal;
-                currentClues = data.clues;
-                currentClueIndex = 0;
-                
-                // Show initial clues immediately
-                console.log('Showing initial clues...');
-                showNextClues();
-                
-                // Show next clues button if there are more clues
-                const nextCluesBtn = document.getElementById('next-clues-btn');
-                if (nextCluesBtn) {
-                    nextCluesBtn.classList.toggle('hidden', currentClueIndex >= currentClues.length);
-                }
-                
-                // Focus on input field
-                document.getElementById('guess-input').focus();
-                
-            } catch (error) {
-                console.error('Error starting new game:', error);
-            }
-        }
-
         let leaderboard = JSON.parse(localStorage.getItem('leaderboard')) || [];
+        let currentClues = [];
+        let currentAnimal = '';
+        let score = 0;
+
+        function updateLeaderboardDisplay() {
+            const leaderboardList = document.getElementById('leaderboard-list');
+            if (!leaderboardList) return;
+            
+            leaderboardList.innerHTML = '';
+            leaderboard.forEach((entry, index) => {
+                const li = document.createElement('li');
+                li.textContent = `${entry.name}: ${entry.score}`;
+                leaderboardList.appendChild(li);
+            });
+        }
 
         function addToLeaderboard(name, score) {
             leaderboard.push({ name, score });
@@ -653,341 +612,45 @@
             leaderboard = leaderboard.slice(0, 5); // Keep only top 5 scores
             localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
             updateLeaderboardDisplay();
-        });
-            leaderboard.sort((a, b) => b.score - a.score);
-            leaderboard = leaderboard.slice(0, 5); // Keep only top 5 scores
-            localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
-            updateLeaderboardDisplay();
-        });
-            leaderboard.sort((a, b) => b.score - a.score);
-            leaderboard = leaderboard.slice(0, 5); // Keep only top 5 scores
-            updateLeaderboardDisplay();
         }
 
-        function updateLeaderboardDisplay() {
-            const list = document.getElementById('leaderboard-list');
-            const leaderboardElement = document.getElementById('leaderboard');
+        function makeGuess() {
+            const guessInput = document.querySelector('input[type="text"]');
+            const guess = guessInput.value.toLowerCase().trim();
             
-            // Always ensure leaderboard is visible
-            leaderboardElement.style.display = 'block';
-            leaderboardElement.classList.remove('hidden');
-            
-            list.innerHTML = '';
-            leaderboard.forEach((entry, index) => {
-                const li = document.createElement('li');
-                li.innerHTML = `
-                    <span>${index + 1}. ${entry.name}</span>
-                    <span>${entry.score}/10</span>
-                `;
-                list.appendChild(li);
-            });
-        }
-
-        function showLeaderboardEntry(finalScore) {
-            const container = document.getElementById('game-container');
-            // Ensure container maintains fixed size
-            container.style.width = '800px';
-            container.style.height = '600px';
-            container.style.overflow = 'hidden';
-            // Clear container and create elements
-            container.innerHTML = '';
-            
-            const title = document.createElement('h1');
-            title.textContent = 'Animal Guessing Game';
-            container.appendChild(title);
-            
-            const gameOverDiv = document.createElement('div');
-            gameOverDiv.className = 'game-over winner';
-            
-            const heading = document.createElement('h2');
-            heading.textContent = `🎉 Congratulations! You won with ${finalScore}/10 correct! 🎉`;
-            gameOverDiv.appendChild(heading);
-            
-            const instructions = document.createElement('p');
-            instructions.textContent = 'Enter your name for the leaderboard:';
-            gameOverDiv.appendChild(instructions);
-            
-            const nameInput = document.createElement('input');
-            nameInput.type = 'text';
-            nameInput.id = 'player-name';
-            nameInput.placeholder = 'Your name';
-            nameInput.className = 'player-name-input';
-            gameOverDiv.appendChild(nameInput);
-            
-            const submitBtn = document.createElement('button');
-            submitBtn.textContent = 'Submit Score';
-            submitBtn.className = 'submit-score-btn';
-            submitBtn.onclick = () => submitScore(finalScore);
-            gameOverDiv.appendChild(submitBtn);
-            
-            container.appendChild(gameOverDiv);
-            // Focus on the name input after rendering
-            setTimeout(() => {
-                const nameInput = document.getElementById('player-name');
-                if (nameInput) {
-                    nameInput.focus();
-                }
-            }, 100);
-        }
-
-        function submitScore(score) {
-            const name = document.getElementById('player-name').value.trim();
-            if (!name) {
-                return; // Don't proceed if no name entered
-            }
-            
-            try {
-                // Load existing leaderboard first
-                    const savedLeaderboard = localStorage.getItem('leaderboard');
-                    if (savedLeaderboard) {
-                        leaderboard = JSON.parse(savedLeaderboard);
+            if (guess === currentAnimal.toLowerCase()) {
+                score++;
+                document.getElementById('score-progress').value = score;
+                if (score >= 10) {
+                    const playerName = prompt('Congratulations! You won! Enter your name:');
+                    if (playerName) {
+                        addToLeaderboard(playerName, score);
                     }
-                    
-                    // Create all necessary DOM elements first
-                    const container = document.getElementById('game-container');
-                    container.innerHTML = ''; // Clear container
-                    
-                    // Create and append title
-                    const title = document.createElement('h1');
-                    title.textContent = 'Animal Guessing Game';
-                    container.appendChild(title);
-                    
-                    // Create and append game over message
-                    const gameOverDiv = document.createElement('div');
-                    gameOverDiv.className = 'game-over winner';
-                    const heading = document.createElement('h2');
-                    heading.textContent = `🎉 Congratulations! You won with ${score}/10 correct! 🎉`;
-                    gameOverDiv.appendChild(heading);
-                    container.appendChild(gameOverDiv);
-                    
-                    // Create leaderboard elements before updating
-                    const leaderboardContainer = document.createElement('div');
-                    leaderboardContainer.id = 'leaderboard';
-                    leaderboardContainer.className = 'leaderboard';
-                    container.appendChild(leaderboardContainer);
-                    
-                    const leaderboardTitle = document.createElement('h2');
-                    leaderboardTitle.textContent = 'Top 5 Players';
-                    leaderboardContainer.appendChild(leaderboardTitle);
-                    
-                    const scrollDiv = document.createElement('div');
-                    scrollDiv.className = 'leaderboard-scroll';
-                    leaderboardContainer.appendChild(scrollDiv);
-                    
-                    const leaderboardList = document.createElement('ul');
-                    leaderboardList.id = 'leaderboard-list';
-                    scrollDiv.appendChild(leaderboardList);
-                    
-                    // Now add the score and update storage
-                    addToLeaderboard(name, score);
-                    localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
-                    
-                    // Update leaderboard display
-                    updateLeaderboardDisplay();
-                    
-                    // Create and append play again button
-                    const playAgainBtn = document.createElement('button');
-                    playAgainBtn.textContent = 'Play Again';
-                    playAgainBtn.className = 'submit-score-btn';
-                    playAgainBtn.style.marginTop = '1rem';
-                    playAgainBtn.onclick = startNewGame;
-                    container.appendChild(playAgainBtn);
-                    
-                    // Update leaderboard display
-                    updateLeaderboardDisplay();
-                    
-                    // Ensure leaderboard is updated after DOM changes
-                    setTimeout(() => {
-                        updateLeaderboardDisplay();
-                        document.querySelector('.submit-score-btn').focus();
-                    }, 100);
-                    
-                    console.log('Score submitted successfully:', { name, score });
-                } catch (error) {
-                    console.error('Error submitting score:', error);
-                    }
-        }
-
-        function showGameOver(finalScore, won) {
-            const container = document.getElementById('game-container');
-            // Ensure container maintains fixed size
-            container.style.width = '800px';
-            container.style.height = '600px';
-            container.style.overflow = 'hidden';
-            const gameOverDiv = document.createElement('div');
-            gameOverDiv.className = `game-over ${won ? 'winner' : 'loser'}`;
-            gameOverDiv.textContent = won 
-                ? `🎉 Congratulations! You won with ${finalScore}/10 correct! 🎉`
-                : `Game Over! You got ${finalScore}/10 correct. Try again!`;
-            
-            container.innerHTML = '';
-            container.appendChild(gameOverDiv);
-            
-            const newGameBtn = document.createElement('button');
-            newGameBtn.textContent = 'Play Again';
-            newGameBtn.onclick = startNewGame;
-            container.appendChild(newGameBtn);
-        }
-
-        async function showNextClues() {
-            try {
-                console.log('Current clues:', currentClues); // Debug log
-                const cluesDiv = document.getElementById('clues-container');
-                
-                if (!currentClues || !Array.isArray(currentClues)) {
-                    console.error('Invalid clues data:', currentClues);
-                    // Try to fetch new game data if clues are invalid
-                    const response = await fetch('/new-game');
-                    const data = await response.json();
-                    currentClues = data.clues;
-                    currentAnimal = data.animal;
-                    currentClueIndex = 0;
-                }
-                
-                // Clear previous clues
-                cluesDiv.innerHTML = '';
-                
-                // Show only the current pair of clues
-                const startIdx = Math.floor(currentClueIndex / 2) * 2;
-                const numCluesToShow = Math.min(2, currentClues.length - startIdx);
-                
-                for (let i = 0; i < numCluesToShow; i++) {
-                    const clueElement = document.createElement('div');
-                    clueElement.className = 'clue';
-                    clueElement.textContent = `Clue #${startIdx + i + 1}: ${currentClues[startIdx + i]}`;
-                    clueElement.style.marginBottom = '1rem';
-                    cluesDiv.appendChild(clueElement);
-                }
-
-                currentClueIndex = startIdx + numCluesToShow;
-
-                // Show/hide next clues button based on remaining clues
-                const nextCluesBtn = document.getElementById('next-clues-btn');
-                if (nextCluesBtn) {
-                    if (currentClueIndex >= currentClues.length) {
-                        nextCluesBtn.classList.add('hidden');
-                    } else {
-                        nextCluesBtn.classList.remove('hidden');
-                        nextCluesBtn.classList.add('visible');
-                    }
-                }
-            } catch (error) {
-                console.error('Error showing next clues:', error);
-            }
-        }
-
-        async function makeGuess() {
-            const guessInput = document.getElementById('guess-input');
-            const guess = guessInput.value.trim().toLowerCase();
-            
-            if (!guess) return;
-            
-            try {
-                const response = await fetch(`/submit-guess/${encodeURIComponent(guess)}/${encodeURIComponent(currentAnimal)}`);
-                const data = await response.json();
-                
-                const feedback = document.getElementById('feedback');
-                const scoreElement = document.getElementById('score');
-                
-                if (data.isCorrect) {
-                    // Update score and progress bar
-                    const [currentScoreStr] = scoreElement.textContent.split('/');
-                    const currentScore = parseInt(currentScoreStr) + 1;
-                    scoreElement.textContent = `${currentScore}/10`;
-                    document.getElementById('score-progress').value = currentScore;
-                    
-                    // Show success feedback
-                    feedback.textContent = '🎉 Correct! You\'re amazing! 🎉';
-                    feedback.className = 'feedback success';
-                    
-                    // Increment questions counter
-                    questionsAsked++;
-                    
-                    // Clear input
-                    guessInput.value = '';
-                    
-                    if (questionsAsked >= 10) {
-                        // Game complete - show leaderboard entry
-                        showLeaderboardEntry(currentScore);
-                    } else {
-                        // Set up next question after delay
-                        setTimeout(async () => {
-                            feedback.className = 'feedback';
-                            
-                            // Get new question
-                            const newGameResponse = await fetch('/new-game');
-                            const newGameData = await newGameResponse.json();
-                            
-                            // Update game state
-                            currentAnimal = newGameData.animal;
-                            currentClues = newGameData.clues;
-                            currentClueIndex = 0;
-                            // Keep existing score and questions count
-                            
-                            // Reset UI for next question
-                            const cluesContainer = document.getElementById('clues-container');
-                            cluesContainer.innerHTML = '';
-                            showNextClues();
-                            guessInput.focus();
-                        }, 1500);
-                    }
+                    startNewGame();
                 } else {
-                    // Wrong guess
-                    if (currentClueIndex >= currentClues.length) {
-                        // No more clues - move to next question
-                        questionsAsked++;
-                        feedback.textContent = `Sorry! I was a ${currentAnimal}!`;
-                        feedback.className = 'feedback error';
-                        
-                        // Clear input
-                        guessInput.value = '';
-                        
-                        if (questionsAsked >= 10) {
-                            // Game over - show final score
-                            const finalScore = parseInt(scoreElement.textContent);
-                            showGameOver(finalScore, finalScore >= 7);
-                        } else {
-                            // Set up next question after delay
-                            setTimeout(async () => {
-                                feedback.className = 'feedback';
-                                
-                                // Get new question
-                                const newGameResponse = await fetch('/new-game');
-                                const newGameData = await newGameResponse.json();
-                                
-                                // Update game state
-                                currentAnimal = newGameData.animal;
-                                currentClues = newGameData.clues;
-                                currentClueIndex = 0;
-                                
-                                // Reset UI for next question
-                                const cluesContainer = document.getElementById('clues-container');
-                                cluesContainer.innerHTML = '';
-                                showNextClues();
-                                guessInput.focus();
-                            }, 1500);
-                        }
-                    } else {
-                        // Still have clues - show next ones
-                        feedback.textContent = 'Not quite! Here are two more clues...';
-                        feedback.className = 'feedback error';
-                        
-                        // Clear input
-                        guessInput.value = '';
-                        
-                        setTimeout(() => {
-                            feedback.className = 'feedback';
-                            showNextClues();
-                            guessInput.focus();
-                        }, 1500);
-                    }
+                    showNextClues();
                 }
-            } catch (error) {
-                console.error('Error submitting guess:', error);
+            } else {
+                alert('Try again!');
             }
+            guessInput.value = '';
         }
 
-        // Start a game when the page loads
+        function showNextClues() {
+            // Reset clues for new animal
+            currentClues = [];
+            currentAnimal = getRandomAnimal();
+            displayClues();
+        }
+
+        function startNewGame() {
+            score = 0;
+            document.getElementById('score-progress').value = 0;
+            showNextClues();
+        }
+
+        // Initialize the game
+        updateLeaderboardDisplay();
         startNewGame();
     </script>
 </body>
