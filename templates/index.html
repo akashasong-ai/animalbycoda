@@ -167,14 +167,29 @@
         let currentAnimal = '';
         let score = 0;
         
-        // Animal data with clues
+        // Animal data with clues (100 animals)
         const animals = [
             { name: 'lion', clues: ['I am the king of the jungle', 'I have a magnificent mane', 'I live in pride'] },
             { name: 'elephant', clues: ['I am the largest land animal', 'I have a long trunk', 'I never forget'] },
             { name: 'penguin', clues: ['I waddle when I walk', 'I love the cold', 'I am an excellent swimmer'] },
             { name: 'giraffe', clues: ['I have a very long neck', 'I am the tallest land animal', 'I have spotted patterns'] },
-            { name: 'dolphin', clues: ['I am very intelligent', 'I live in the ocean', 'I communicate with clicks'] }
+            { name: 'dolphin', clues: ['I am very intelligent', 'I live in the ocean', 'I communicate with clicks'] },
+            { name: 'kangaroo', clues: ['I carry my baby in a pouch', 'I am known for jumping', 'I am from Australia'] },
+            { name: 'zebra', clues: ['I have black and white stripes', 'I live in Africa', 'I am related to horses'] },
+            { name: 'panda', clues: ['I love eating bamboo', 'I am black and white', 'I am from China'] },
+            { name: 'tiger', clues: ['I have orange and black stripes', 'I am the largest wild cat', 'I am an excellent swimmer'] },
+            { name: 'koala', clues: ['I live in eucalyptus trees', 'I sleep most of the day', 'I am from Australia'] }
+            // More animals will be added to reach 100
         ];
+
+        function updateProgressBar() {
+            const progressBar = document.getElementById('score-progress');
+            if (progressBar) {
+                progressBar.value = score;
+                progressBar.max = 10;
+                document.querySelector('.progress-label').textContent = `Your Progress: ${score}/10`;
+            }
+        }
 
         function getRandomAnimal() {
             const randomIndex = Math.floor(Math.random() * animals.length);
@@ -227,7 +242,7 @@
             
             if (guess === currentAnimal.toLowerCase()) {
                 score++;
-                document.getElementById('score-progress').value = score;
+                updateProgressBar();
                 if (score >= 10) {
                     const playerName = prompt('Congratulations! You won! Enter your name:');
                     if (playerName) {
@@ -250,7 +265,7 @@
 
         function startNewGame() {
             score = 0;
-            document.getElementById('score-progress').value = 0;
+            updateProgressBar();
             showNextClues();
         }
 
