@@ -77,7 +77,8 @@
             position: relative;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            overflow-y: auto;
+            max-height: 80vh;
         }
 
         @media (max-width: 800px) {
@@ -183,10 +184,10 @@ background: transparent;
         
         .clue {
             background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            margin: 0.75rem auto;
-            padding: 1.25rem;
+            margin: 0.25rem auto;
+            padding: 0.75rem;
             border-radius: var(--border-radius);
-            font-size: 1.1rem;
+            font-size: 1rem;
             border-left: 4px solid var(--accent-color);
             text-align: left;
             box-shadow: var(--shadow);
@@ -205,6 +206,8 @@ background: transparent;
             animation: slideIn 0.5s ease-out forwards;
             opacity: 0;
             backdrop-filter: blur(5px);
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
         }
 
         #guess-container {
@@ -625,13 +628,22 @@ background: transparent;
         let currentClues = [];
         let currentClueIndex = 0;
         let questionsAsked = 0;
+        let leaderboard = [];
+
+        // Load saved leaderboard data on page load
+        const savedLeaderboard = localStorage.getItem('leaderboard');
+        if (savedLeaderboard) {
+            leaderboard = JSON.parse(savedLeaderboard);
+            updateLeaderboardDisplay();
+        }
 
         async function startNewGame() {
             try {
                 // Only reset game state if it's a new game (not continuing)
                 if (questionsAsked === 0 || questionsAsked >= 10) {
                     questionsAsked = 0;
-                    document.getElementById('score').textContent = '0/10';
+                    document.getElementById('score').textContent = '0';
+                    document.getElementById('score-container').innerHTML = 'Score: <span id="score">0</span>/10';
                 }
                 
                 // Clear existing game state
@@ -677,8 +689,6 @@ background: transparent;
             }
         }
 
-        let leaderboard = [];
-
         function addToLeaderboard(name, score) {
             leaderboard.push({ name, score });
             leaderboard.sort((a, b) => b.score - a.score);
@@ -690,9 +700,17 @@ background: transparent;
             const list = document.getElementById('leaderboard-list');
             const leaderboardElement = document.getElementById('leaderboard');
             
+            if (!list || !leaderboardElement) {
+                console.error('Leaderboard elements not found');
+                return;
+            }
+            
             // Always ensure leaderboard is visible
             leaderboardElement.style.display = 'block';
             leaderboardElement.classList.remove('hidden');
+            
+            // Sort leaderboard by score before displaying
+            leaderboard.sort((a, b) => b.score - a.score);
             
             list.innerHTML = '';
             leaderboard.forEach((entry, index) => {
@@ -703,14 +721,19 @@ background: transparent;
                 `;
                 list.appendChild(li);
             });
+            
+            // Save to localStorage after any update
+            localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
         }
 
         function showLeaderboardEntry(finalScore) {
             const container = document.getElementById('game-container');
-            // Ensure container maintains fixed size
-            container.style.width = '800px';
-            container.style.height = '600px';
-            container.style.overflow = 'hidden';
+            // Ensure container maintains proper sizing
+            container.style.width = '100%';
+            container.style.maxWidth = '800px';
+            container.style.minHeight = '600px';
+            container.style.maxHeight = '80vh';
+            container.style.overflowY = 'auto';
             container.style.display = 'flex';
             container.style.flexDirection = 'column';
             // Clear container and create elements
@@ -770,88 +793,49 @@ background: transparent;
 
         function submitScore(score) {
             const name = document.getElementById('player-name').value.trim();
-            if (!name) {
-                return; // Don't proceed if no name entered
-            }
+            if (!name) return;
             
             try {
-                // Load existing leaderboard first
-                    const savedLeaderboard = localStorage.getItem('leaderboard');
-                    if (savedLeaderboard) {
-                        leaderboard = JSON.parse(savedLeaderboard);
-                    }
-                    
-                    // Create all necessary DOM elements first
-                    const container = document.getElementById('game-container');
-                    container.innerHTML = ''; // Clear container
-                    
-                    // Create and append title
-                    const title = document.createElement('h1');
-                    title.textContent = 'Animal Guessing Game';
-                    container.appendChild(title);
-                    
-                    // Create and append game over message
-                    const gameOverDiv = document.createElement('div');
-                    gameOverDiv.className = 'game-over winner';
-                    const heading = document.createElement('h2');
-                    heading.textContent = `🎉 Congratulations! You won with ${score}/10 correct! 🎉`;
-                    gameOverDiv.appendChild(heading);
-                    container.appendChild(gameOverDiv);
-                    
-                    // Create leaderboard elements before updating
-                    const leaderboardContainer = document.createElement('div');
-                    leaderboardContainer.id = 'leaderboard';
-                    leaderboardContainer.className = 'leaderboard';
-                    container.appendChild(leaderboardContainer);
-                    
-                    const leaderboardTitle = document.createElement('h2');
-                    leaderboardTitle.textContent = 'Top 5 Players';
-                    leaderboardContainer.appendChild(leaderboardTitle);
-                    
-                    const scrollDiv = document.createElement('div');
-                    scrollDiv.className = 'leaderboard-scroll';
-                    leaderboardContainer.appendChild(scrollDiv);
-                    
-                    const leaderboardList = document.createElement('ul');
-                    leaderboardList.id = 'leaderboard-list';
-                    scrollDiv.appendChild(leaderboardList);
-                    
-                    // Now add the score and update storage
-                    addToLeaderboard(name, score);
-                    localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
-                    
-                    // Update leaderboard display
-                    updateLeaderboardDisplay();
-                    
-                    // Create and append play again button
-                    const playAgainBtn = document.createElement('button');
-                    playAgainBtn.textContent = 'Play Again';
-                    playAgainBtn.className = 'submit-score-btn';
-                    playAgainBtn.style.marginTop = '1rem';
-                    playAgainBtn.onclick = startNewGame;
-                    container.appendChild(playAgainBtn);
-                    
-                    // Update leaderboard display
-                    updateLeaderboardDisplay();
-                    
-                    // Ensure leaderboard is updated after DOM changes
-                    setTimeout(() => {
-                        updateLeaderboardDisplay();
-                        document.querySelector('.submit-score-btn').focus();
-                    }, 100);
-                    
-                    console.log('Score submitted successfully:', { name, score });
-                } catch (error) {
-                    console.error('Error submitting score:', error);
-                    }
+                // Add score to leaderboard
+                addToLeaderboard(name, score);
+                localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
+                
+                // Clear game container
+                const container = document.getElementById('game-container');
+                container.innerHTML = '';
+                
+                // Show game over message
+                const gameOverDiv = document.createElement('div');
+                gameOverDiv.className = 'game-over winner';
+                gameOverDiv.innerHTML = `<h2>🎉 Congratulations! You won with ${score}/10 correct! 🎉</h2>`;
+                container.appendChild(gameOverDiv);
+                
+                // Add Play Again button
+                const playAgainBtn = document.createElement('button');
+                playAgainBtn.textContent = 'Play Again';
+                playAgainBtn.className = 'submit-score-btn';
+                playAgainBtn.style.marginTop = '2rem';
+                playAgainBtn.onclick = () => {
+                    questionsAsked = 0;
+                    startNewGame();
+                };
+                container.appendChild(playAgainBtn);
+                
+                // Update leaderboard display
+                updateLeaderboardDisplay();
+            } catch (error) {
+                console.error('Error submitting score:', error);
+            }
         }
 
         function showGameOver(finalScore, won) {
             const container = document.getElementById('game-container');
-            // Ensure container maintains fixed size
-            container.style.width = '800px';
-            container.style.height = '600px';
-            container.style.overflow = 'hidden';
+            // Ensure container maintains proper sizing
+            container.style.width = '100%';
+            container.style.maxWidth = '800px';
+            container.style.minHeight = '600px';
+            container.style.maxHeight = '80vh';
+            container.style.overflowY = 'auto';
             const gameOverDiv = document.createElement('div');
             gameOverDiv.className = `game-over ${won ? 'winner' : 'loser'}`;
             gameOverDiv.textContent = won 
@@ -889,13 +873,31 @@ background: transparent;
                 const startIdx = Math.floor(currentClueIndex / 2) * 2;
                 const numCluesToShow = Math.min(2, currentClues.length - startIdx);
                 
-                for (let i = 0; i < numCluesToShow; i++) {
+                // Clear previous clues
+                cluesDiv.innerHTML = '';
+                
+                // Create container for clues
+                const cluesContainer = document.createElement('div');
+                cluesContainer.style.display = 'grid';
+                cluesContainer.style.gridTemplateColumns = '1fr';
+                cluesContainer.style.gap = '0.5rem';
+                cluesContainer.style.marginBottom = '1rem';
+                cluesContainer.style.padding = '0.5rem';
+                
+                // Create clues with proper spacing
+                currentClues.slice(startIdx, startIdx + numCluesToShow).forEach((clue, idx) => {
                     const clueElement = document.createElement('div');
                     clueElement.className = 'clue';
-                    clueElement.textContent = `Clue #${startIdx + i + 1}: ${currentClues[startIdx + i]}`;
-                    clueElement.style.marginBottom = '1rem';
-                    cluesDiv.appendChild(clueElement);
-                }
+                    const clueNumber = document.createElement('span');
+                    clueNumber.textContent = `Clue #${startIdx + idx + 1}: `;
+                    const clueText = document.createElement('span');
+                    clueText.textContent = clue;
+                    clueElement.appendChild(clueNumber);
+                    clueElement.appendChild(clueText);
+                    cluesContainer.appendChild(clueElement);
+                });
+                
+                cluesDiv.appendChild(cluesContainer);
 
                 currentClueIndex = startIdx + numCluesToShow;
 
@@ -929,9 +931,8 @@ background: transparent;
                 
                 if (data.isCorrect) {
                     // Update score
-                    const [currentScoreStr] = scoreElement.textContent.split('/');
-                    const currentScore = parseInt(currentScoreStr) + 1;
-                    scoreElement.textContent = `${currentScore}/10`;
+                    const currentScore = parseInt(scoreElement.textContent) + 1;
+                    document.getElementById('score').textContent = currentScore;
                     
                     // Show success feedback
                     feedback.textContent = '🎉 Correct! You\'re amazing! 🎉';
