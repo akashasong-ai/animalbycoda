@@ -497,16 +497,16 @@ background: transparent;
         }
 
         .leaderboard {
-            margin-top: 2rem;
+            width: 100%;
+            max-width: 800px;
+            margin: 2rem auto;
             padding: 1.5rem;
             background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
             border-radius: var(--border-radius);
             border: 2px solid var(--accent-color);
-            color: #FFFFFF;
             box-shadow: 0 4px 8px rgba(0,0,0,0.15);
             backdrop-filter: blur(5px);
-            width: 100%;
-            max-width: 800px;
+            color: #FFFFFF;
         }
 
         .leaderboard h2 {
@@ -595,7 +595,9 @@ background: transparent;
 </head>
 <body>
     <div class="main-container">
-        <h1>Animal Guessing Game</h1>
+        <img src="/static/images/Logo.jpg" 
+             alt="Animal Guessing Game" 
+             style="width: min(300px, 80vw); height: auto; margin-bottom: 1rem;">
         <p>I will give you clues about an animal, and you try to guess what it is!</p>
         
         <div id="game-container">
@@ -604,9 +606,7 @@ background: transparent;
                     <img src="/static/images/dmt-logo.png" alt="DMT Logo" style="width: 50px; height: auto;">
                 </a>
             </div>
-            <div id="score-container">
-                Score: <span id="score">0</span>/10
-            </div>
+            <div id="score-container">Score:&nbsp;<span id="score">0</span>/10</div>
             <div id="feedback" class="feedback"></div>
             <div id="clues-container"></div>
             <div id="guess-container">
@@ -643,7 +643,7 @@ background: transparent;
                 if (questionsAsked === 0 || questionsAsked >= 10) {
                     questionsAsked = 0;
                     document.getElementById('score').textContent = '0';
-                    document.getElementById('score-container').innerHTML = 'Score: <span id="score">0</span>/10';
+                    document.getElementById('score-container').innerHTML = 'Score:&nbsp;<span id="score">0</span>/10';
                 }
                 
                 // Clear existing game state
@@ -770,11 +770,11 @@ background: transparent;
             
             const leaderboardDiv = document.createElement('div');
             leaderboardDiv.className = 'leaderboard';
-            leaderboardDiv.style.margin = '1rem 0';
+            leaderboardDiv.style.margin = '2rem auto';
             leaderboardDiv.style.maxHeight = '300px';
             leaderboardDiv.style.overflowY = 'auto';
-            leaderboardDiv.style.width = '90%';
-            leaderboardDiv.style.alignSelf = 'center';
+            leaderboardDiv.style.width = '100%';
+            leaderboardDiv.style.maxWidth = '800px';
             
             const leaderboardTitle = document.createElement('h2');
             leaderboardTitle.textContent = 'Top 5 Players';
@@ -810,7 +810,7 @@ background: transparent;
                 gameOverDiv.innerHTML = `<h2>🎉 Congratulations! You won with ${score}/10 correct! 🎉</h2>`;
                 container.appendChild(gameOverDiv);
                 
-                // Add Play Again button
+                // Add Play Again button and leaderboard
                 const playAgainBtn = document.createElement('button');
                 playAgainBtn.textContent = 'Play Again';
                 playAgainBtn.className = 'submit-score-btn';
@@ -820,6 +820,11 @@ background: transparent;
                     startNewGame();
                 };
                 container.appendChild(playAgainBtn);
+                
+                // Add leaderboard with consistent sizing
+                const leaderboardDiv = document.createElement('div');
+                leaderboardDiv.className = 'leaderboard';
+                container.appendChild(leaderboardDiv);
                 
                 // Update leaderboard display
                 updateLeaderboardDisplay();
@@ -847,7 +852,10 @@ background: transparent;
             
             const newGameBtn = document.createElement('button');
             newGameBtn.textContent = 'Play Again';
-            newGameBtn.onclick = startNewGame;
+            newGameBtn.onclick = () => {
+                questionsAsked = 0;
+                startNewGame();
+            };
             container.appendChild(newGameBtn);
         }
 
