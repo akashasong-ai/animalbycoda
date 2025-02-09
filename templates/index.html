@@ -956,12 +956,27 @@ background: transparent;
 
         async function makeGuess() {
             const guessInput = document.getElementById('guess-input');
-            const guess = guessInput.value.trim().toLowerCase();
+            const guess = guessInput.value.trim();
             
             if (!guess) return;
+
+            // Easter egg for "Burning Man"
+            if (guess === "Burning Man") {
+                const scoreElement = document.getElementById('score');
+                const currentScore = parseInt(scoreElement.textContent);
+                scoreElement.textContent = currentScore + 100;
+                const feedback = document.getElementById('feedback');
+                feedback.textContent = "Coda, the creator of this game, has awarded your awesomeness with 100 points.";
+                feedback.className = 'feedback success';
+                guessInput.value = '';
+                return;
+            }
+
+            // Convert to lowercase for normal game logic
+            const guessLower = guess.toLowerCase();
             
             try {
-                const response = await fetch(`/submit-guess/${encodeURIComponent(guess)}/${encodeURIComponent(currentAnimal)}`);
+                const response = await fetch(`/submit-guess/${encodeURIComponent(guessLower)}/${encodeURIComponent(currentAnimal)}`);
                 const data = await response.json();
                 
                 const feedback = document.getElementById('feedback');
