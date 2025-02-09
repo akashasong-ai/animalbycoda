@@ -66,10 +66,10 @@
 
         .game-container {
             width: 100%;
-            max-width: 100%;
-            min-height: auto;
-            margin: 0;
-            padding: 1rem;
+            max-width: 800px;
+            min-height: 600px;
+            margin: 0 auto;
+            padding: 2rem;
             background: var(--background-color);
             border-radius: var(--border-radius);
             border: 3px solid var(--primary-color);
@@ -78,7 +78,7 @@
             display: flex;
             flex-direction: column;
             overflow-y: auto;
-            max-height: none;
+            max-height: 80vh;
         }
 
         @media (min-width: 800px) {
@@ -247,10 +247,13 @@ background: transparent;
             
             .game-container {
                 width: 100%;
-                min-height: 80vh;
+                min-height: auto;
                 padding: 1rem;
                 margin: 0;
                 border-radius: var(--border-radius);
+                display: flex;
+                flex-direction: column;
+                max-height: none;
             }
 
             h1 {
@@ -503,9 +506,9 @@ background: transparent;
 
         .leaderboard {
             width: 100%;
-            max-width: 100%;
-            margin: 0.5rem 0;
-            padding: 0.75rem;
+            max-width: 800px;
+            margin: 1rem auto;
+            padding: 1.5rem;
             background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
             border-radius: var(--border-radius);
             border: 2px solid var(--accent-color);
@@ -783,8 +786,8 @@ background: transparent;
             
             const leaderboardDiv = document.createElement('div');
             leaderboardDiv.className = 'leaderboard';
-            leaderboardDiv.style.margin = '2rem auto';
-            leaderboardDiv.style.maxHeight = '300px';
+            leaderboardDiv.style.margin = '1rem auto';
+            leaderboardDiv.style.maxHeight = '80vh';
             leaderboardDiv.style.overflowY = 'auto';
             leaderboardDiv.style.width = '100%';
             leaderboardDiv.style.maxWidth = '800px';
@@ -854,6 +857,8 @@ background: transparent;
             container.style.minHeight = '600px';
             container.style.maxHeight = '80vh';
             container.style.overflowY = 'auto';
+            container.style.display = 'flex';
+            container.style.flexDirection = 'column';
             const gameOverDiv = document.createElement('div');
             gameOverDiv.className = `game-over ${won ? 'winner' : 'loser'}`;
             gameOverDiv.textContent = won 
