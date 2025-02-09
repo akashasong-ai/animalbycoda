@@ -104,26 +104,37 @@
 background: transparent;
         }
         #game-container {
-            background: url('/static/images/new_game_bg.png') center/cover no-repeat;
+            width: 100%;
+            max-width: 800px;
+            min-height: 600px;
+            margin: 0 auto;
             padding: 2rem;
-            border-radius: 1rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background: url('/static/images/new_game_bg.png') center/cover no-repeat;
+            border-radius: var(--border-radius);
+            border: 3px solid var(--primary-color);
+            box-shadow: var(--shadow);
             position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            max-height: 80vh;
         }
 
         #score-container {
-            background: var(--primary-color);
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
             color: #FFFFFF;
-            padding: 0.5rem 1rem;
+            padding: 1rem 1.5rem;
             border-radius: var(--border-radius);
-            font-size: clamp(1rem, 4vw, 1.2rem);
+            font-size: clamp(1.2rem, 4vw, 1.5rem);
             font-weight: 600;
-            margin: -0.5rem auto 1rem;
-            width: 90%;
-            max-width: 400px;
+            margin: 0 auto 1.5rem;
+            width: 100%;
+            max-width: 800px;
             text-align: center;
             box-shadow: var(--shadow);
+            border: 2px solid var(--accent-color);
             order: 1;
+            backdrop-filter: blur(5px);
         }
         
         .progress-label {
@@ -265,11 +276,12 @@ background: transparent;
                 position: sticky;
                 top: 0;
                 z-index: 10;
-                width: 90%;
+                width: 100%;
                 margin: 0.5rem auto;
                 font-size: min(1.2rem, 4vw);
-                padding: 0.6rem 1rem;
-                background: var(--primary-color);
+                padding: 1rem;
+                background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+                border: 2px solid var(--accent-color);
             }
 
             #feedback {
