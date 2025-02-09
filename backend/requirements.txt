@@ -1,0 +1,5 @@
+Flask
+python-Levenshtein
+gunicorn
+fastapi
+uvicorn[standard]
