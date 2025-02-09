@@ -634,7 +634,7 @@ background: transparent;
                     <img src="/static/images/dmt-logo.png" alt="DMT Logo" style="width: 50px; height: auto;">
                 </a>
             </div>
-            <div id="score-container">Score:&nbsp;<span id="score">0</span><span style="margin-left: -2px">/10</span></div>
+            <div id="score-container">Score: <span id="score">0</span><span> of 10</span></div>
             <div id="feedback" class="feedback"></div>
             <div id="clues-container"></div>
             <div id="guess-container">
@@ -671,7 +671,7 @@ background: transparent;
                 if (questionsAsked === 0 || questionsAsked >= 10) {
                     questionsAsked = 0;
                     document.getElementById('score').textContent = '0';
-                    document.getElementById('score-container').innerHTML = 'Score: <span id="score">0</span><span>/10</span>';
+                    document.getElementById('score-container').innerHTML = 'Score: <span id="score">0</span><span> of 10</span>';
                 }
                 
                 // Clear existing game state
@@ -745,7 +745,7 @@ background: transparent;
                 const li = document.createElement('li');
                 li.innerHTML = `
                     <span>${index + 1}. ${entry.name}</span>
-                    <span>${entry.score}/10</span>
+                    <span>${entry.score} of 10</span>
                 `;
                 list.appendChild(li);
             });
@@ -772,7 +772,7 @@ background: transparent;
             gameOverDiv.style.marginBottom = '1rem';
             
             const heading = document.createElement('h2');
-            heading.textContent = `🎉 Congratulations! You won with ${finalScore}/10 correct! 🎉`;
+            heading.textContent = `🎉 Congratulations! You won with ${finalScore} of 10 correct! 🎉`;
             gameOverDiv.appendChild(heading);
             
             const instructions = document.createElement('p');
@@ -835,7 +835,7 @@ background: transparent;
                 // Show game over message
                 const gameOverDiv = document.createElement('div');
                 gameOverDiv.className = 'game-over winner';
-                gameOverDiv.innerHTML = `<h2>🎉 Congratulations! You won with ${score}/10 correct! 🎉</h2>`;
+                gameOverDiv.innerHTML = `<h2>🎉 Congratulations! You won with ${score} of 10 correct! 🎉</h2>`;
                 container.appendChild(gameOverDiv);
                 
                 // Add Play Again button and leaderboard
@@ -874,8 +874,8 @@ background: transparent;
             const gameOverDiv = document.createElement('div');
             gameOverDiv.className = `game-over ${won ? 'winner' : 'loser'}`;
             gameOverDiv.textContent = won 
-                ? `🎉 Congratulations! You won with ${finalScore}/10 correct! 🎉`
-                : `Game Over! You got ${finalScore}/10 correct. Try again!`;
+                ? `🎉 Congratulations! You won with ${finalScore} of 10 correct! 🎉`
+                : `Game Over! You got ${finalScore} of 10 correct. Try again!`;
             
             container.innerHTML = '';
             container.appendChild(gameOverDiv);
