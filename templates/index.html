@@ -724,34 +724,37 @@ background: transparent;
             updateLeaderboardDisplay();
         }
 
-        function updateLeaderboardDisplay() {
-            const list = document.getElementById('leaderboard-list');
-            const leaderboardElement = document.getElementById('leaderboard');
-            
-            if (!list || !leaderboardElement) {
-                console.error('Leaderboard elements not found');
-                return;
-            }
-            
-            // Always ensure leaderboard is visible
-            leaderboardElement.style.display = 'block';
-            leaderboardElement.classList.remove('hidden');
-            
-            // Sort leaderboard by score before displaying
-            leaderboard.sort((a, b) => b.score - a.score);
-            
-            list.innerHTML = '';
-            leaderboard.forEach((entry, index) => {
-                const li = document.createElement('li');
-                li.innerHTML = `
-                    <span>${index + 1}. ${entry.name}</span>
-                    <span>${entry.score} of 10</span>
-                `;
-                list.appendChild(li);
-            });
-            
-            // Save to localStorage after any update
-            localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
+        async function updateLeaderboardDisplay() {
+            try {
+                const response = await fetch('https://animalbycoda-leaderboard.onrender.com/api/leaderboard');
+                const leaderboardData = await response.json();
+                
+                const list = document.getElementById('leaderboard-list');
+                const leaderboardElement = document.getElementById('leaderboard');
+                
+                if (!list || !leaderboardElement) {
+                    console.error('Leaderboard elements not found');
+                    return;
+                }
+                
+                // Always ensure leaderboard is visible
+                leaderboardElement.style.display = 'block';
+                leaderboardElement.classList.remove('hidden');
+                
+                list.innerHTML = '';
+                leaderboardData.forEach((entry, index) => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <span>${index + 1}. ${entry.name}</span>
+                        <span>${entry.score} of 10</span>
+                    `;
+                    list.appendChild(li);
+                });
+            } catch (error) {
+                console.error('Error updating leaderboard:', error);
+                // Fall back to empty leaderboard on error
+                const list = document.getElementById('leaderboard-list');
+                if (list) list.innerHTML = '';
         }
 
         function showLeaderboardEntry(finalScore) {
@@ -819,7 +822,7 @@ background: transparent;
             }, 100);
         }
 
-        function submitScore(score) {
+        async function submitScore(score) {
             const name = document.getElementById('player-name').value.trim();
             if (!name) return;
             
@@ -832,9 +835,21 @@ background: transparent;
                     feedback.className = 'feedback success';
                 }
 
-                // Add score to leaderboard
-                addToLeaderboard(name, score);
-                localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
+                // Submit score to server
+                await fetch('https://animalbycoda-leaderboard.onrender.com/api/leaderboard', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name,
+                        score,
+                        timestamp: new Date().toISOString()
+                    })
+                });
+
+                // Update leaderboard display
+                await updateLeaderboardDisplay();
                 
                 // Clear game container
                 const container = document.getElementById('game-container');
