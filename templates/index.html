@@ -824,6 +824,14 @@ background: transparent;
             if (!name) return;
             
             try {
+                // Easter egg for Lilah
+                if (name === "Lilah") {
+                    score += 400;
+                    const feedback = document.getElementById('feedback');
+                    feedback.textContent = "Since you are my best friend, you get 400 extra points.";
+                    feedback.className = 'feedback success';
+                }
+
                 // Add score to leaderboard
                 addToLeaderboard(name, score);
                 localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
@@ -843,10 +851,7 @@ background: transparent;
                 playAgainBtn.textContent = 'Play Again';
                 playAgainBtn.className = 'submit-score-btn';
                 playAgainBtn.style.marginTop = '2rem';
-                playAgainBtn.onclick = () => {
-                    questionsAsked = 0;
-                    startNewGame();
-                };
+                playAgainBtn.onclick = resetGame;
                 container.appendChild(playAgainBtn);
                 
                 // Add leaderboard with consistent sizing
@@ -882,10 +887,7 @@ background: transparent;
             
             const newGameBtn = document.createElement('button');
             newGameBtn.textContent = 'Play Again';
-            newGameBtn.onclick = () => {
-                questionsAsked = 0;
-                startNewGame();
-            };
+            newGameBtn.onclick = resetGame;
             container.appendChild(newGameBtn);
         }
 
@@ -1062,6 +1064,45 @@ background: transparent;
             } catch (error) {
                 console.error('Error submitting guess:', error);
             }
+        }
+
+        function resetGame() {
+            // Show loading state
+            const feedback = document.getElementById('feedback');
+            feedback.textContent = 'Starting new game...';
+            feedback.className = 'feedback';
+            
+            // Reset game state
+            questionsAsked = 0;
+            currentAnimal = '';
+            currentClues = [];
+            currentClueIndex = 0;
+            
+            // Reset UI elements
+            document.getElementById('score').textContent = '0';
+            document.getElementById('score-container').innerHTML = 'Score: <span id="score">0</span><span> of 10</span>';
+            
+            // Reset game container to initial state
+            const container = document.getElementById('game-container');
+            container.innerHTML = `
+                <div style="position: absolute; top: 1rem; right: 1rem; z-index: 10;">
+                    <a href="https://domoretech.ai" target="_blank">
+                        <img src="/static/images/dmt-logo.png" alt="DMT Logo" style="width: 50px; height: auto;">
+                    </a>
+                </div>
+                <div id="score-container">Score: <span id="score">0</span><span> of 10</span></div>
+                <div id="feedback" class="feedback"></div>
+                <div id="clues-container"></div>
+                <div id="guess-container">
+                    <input type="text" id="guess-input" placeholder="Enter your guess">
+                    <button onclick="makeGuess()">Guess!</button>
+                </div>
+            `;
+            
+            // Start new game with slight delay to show loading state
+            setTimeout(() => {
+                startNewGame();
+            }, 500);
         }
 
         // Start a game when the page loads
